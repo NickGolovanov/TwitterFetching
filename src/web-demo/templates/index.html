@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Fetch Tweets</title>
+		<script
+			async
+			src="https://platform.twitter.com/widgets.js"
+			charset="utf-8"
+		></script>
+		<style>
+			select {
+				width: 150px;
+			}
+			form {
+				display: flex;
+				gap: 0.5rem;
+			}
+			input {
+				flex: 1 1 auto;
+			}
+			button,
+			a {
+				display: inline-block;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Fetch Recent Tweets</h1>
+
+		<form method="POST">
+			<select id="querySelect">
+				{% for option in queries %}
+				<option value="{{ option }}" {% if loop.first %}selected{% endif %}>
+					{{ option }}
+				</option>
+				{% endfor %}
+			</select>
+			<input
+				type="text"
+				name="query"
+				id="queryInput"
+				placeholder="Enter search term"
+				value="{{ queries[0] if queries else '' }}"
+			/>
+			<button type="submit">Get Tweets</button>
+			<a href="/db">Database Visualization</a>
+		</form>
+
+		<div>
+			<script
+				async
+				src="https://platform.twitter.com/widgets.js"
+				charset="utf-8"
+			></script>
+			{% for tweet in tweets %}
+			<blockquote class="twitter-tweet">
+				<a href="{{ tweet }}"></a>
+			</blockquote>
+			{% endfor %}
+		</div>
+		<script>
+			document
+				.getElementById('querySelect')
+				.addEventListener('change', function (event) {
+					document.getElementById('queryInput').value = event.target.value
+				})
+		</script>
+	</body>
+</html>
