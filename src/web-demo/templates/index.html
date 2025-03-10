@@ -10,56 +10,130 @@
 			charset="utf-8"
 		></script>
 		<style>
-			select {
-				width: 150px;
-			}
-			form {
+			body {
+				font-family: 'Arial', sans-serif;
+				background-color: #f4f4f9;
+				color: #333;
+				margin: 0;
+				padding: 0;
 				display: flex;
-				gap: 0.5rem;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 100vh;
 			}
+
+			h1 {
+				color: #444;
+				font-size: 2rem;
+				margin-bottom: 1rem;
+			}
+
+			form {
+				width: 90vw;
+				display: flex;
+				gap: 0.8rem;
+				padding: 1rem;
+				background: white;
+				border-radius: 10px;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+				align-items: center;
+			}
+
+			select,
 			input {
-				flex: 1 1 auto;
+				padding: 0.6rem;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				font-size: 1rem;
 			}
-			button,
+
+			button {
+				background: #007bff;
+				color: white;
+				border: none;
+				padding: 0.6rem 1rem;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background 0.3s ease;
+				white-space: nowrap;
+			}
+
+			button:hover {
+				background: #0056b3;
+			}
+
 			a {
-				display: inline-block;
+				text-decoration: none;
+				color: #007bff;
+				font-weight: bold;
+			}
+
+			.container {
+				margin: 2rem auto;
+			}
+
+			.tweet-container {
+				margin-top: 2rem;
+				padding: 1rem;
+				background: white;
+				border-radius: 10px;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			blockquote {
+				margin: 10px 0;
+			}
+
+			#querySelect {
+				max-width: 150px;
+			}
+
+			#queryInput {
+				width: 100%;
 			}
 		</style>
 	</head>
 	<body>
-		<h1>Fetch Recent Tweets</h1>
+		<div class="container">
+			<h1>Fetch Recent Tweets</h1>
 
-		<form method="POST">
-			<select id="querySelect">
-				{% for option in queries %}
-				<option value="{{ option }}" {% if loop.first %}selected{% endif %}>
-					{{ option }}
-				</option>
+			<form method="POST">
+				<select id="querySelect">
+					{% for option in queries %}
+					<option value="{{ option }}" {% if loop.first %}selected{% endif %}>
+						{{ option }}
+					</option>
+					{% endfor %}
+				</select>
+				<input
+					type="text"
+					name="query"
+					id="queryInput"
+					placeholder="Enter search term"
+					value="{{ queries[0] if queries else '' }}"
+				/>
+				<button type="submit">Get Tweets</button>
+				<a href="/db">Database</a>
+			</form>
+
+			<div class="tweet-container">
+				<script
+					async
+					src="https://platform.twitter.com/widgets.js"
+					charset="utf-8"
+				></script>
+				{% for tweet in tweets %}
+				<blockquote class="twitter-tweet">
+					<a href="{{ tweet }}"></a>
+				</blockquote>
 				{% endfor %}
-			</select>
-			<input
-				type="text"
-				name="query"
-				id="queryInput"
-				placeholder="Enter search term"
-				value="{{ queries[0] if queries else '' }}"
-			/>
-			<button type="submit">Get Tweets</button>
-			<a href="/db">Database Visualization</a>
-		</form>
-
-		<div>
-			<script
-				async
-				src="https://platform.twitter.com/widgets.js"
-				charset="utf-8"
-			></script>
-			{% for tweet in tweets %}
-			<blockquote class="twitter-tweet">
-				<a href="{{ tweet }}"></a>
-			</blockquote>
-			{% endfor %}
+			</div>
 		</div>
+
 		<script>
 			document
 				.getElementById('querySelect')

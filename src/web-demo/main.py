@@ -30,12 +30,60 @@ client = tweepy.Client(
 def get_example_tweets():
     return [
         {
-            "id": 1897362946738806855,
-            "text": "https://t.co/VJOfR9slWj",
+            "id": 1897951629413917183,
+            "text": "A beautiful sunny morning in Amsterdam 😎 https://t.co/68gzlpEQJY",
             "created_at": datetime.datetime(
-                2025, 3, 5, 19, 5, 52, tzinfo=datetime.timezone.utc
+                2025, 3, 7, 10, 5, 5, tzinfo=datetime.timezone.utc
             ),
-            "username": "TaWeststrate",
+            "username": "paxtondom",
+        },
+        {
+            "id": 1897933285747003820,
+            "text": "Amsterdam with good weather is such a beautiful city🫶",
+            "created_at": datetime.datetime(
+                2025, 3, 7, 8, 52, 11, tzinfo=datetime.timezone.utc
+            ),
+            "username": "coralaespa_m",
+        },
+        {
+            "id": 1897916520656748904,
+            "text": "loving Amsterdam’s weather for now.",
+            "created_at": datetime.datetime(
+                2025, 3, 7, 7, 45, 34, tzinfo=datetime.timezone.utc
+            ),
+            "username": "trvpsxxl_",
+        },
+        {
+            "id": 1897905376403898511,
+            "text": "Solar panels blind pilots approaching Amsterdam Schiphol; runway closed for two hours when sunny https://t.co/VxABZcf0Nk via @aviation24_be",
+            "created_at": datetime.datetime(
+                2025, 3, 7, 7, 1, 17, tzinfo=datetime.timezone.utc
+            ),
+            "username": "ranchette1",
+        },
+        {
+            "id": 1897861700315234806,
+            "text": "˚₊‧꒰ა ☆ ໒꒱ ‧₊˚ AESPA takes Paris by storm! The highly anticipated 2024-25 AESPA LIVE TOUR – SYNK : PARALLEL LINE – in Paris and Amsterdam delivers an electrifying night filled with breathtaking performances, stunning visuals, and unparalleled energy. https://t.co/MNar1w3GzE",
+            "created_at": datetime.datetime(
+                2025, 3, 7, 4, 7, 44, tzinfo=datetime.timezone.utc
+            ),
+            "username": "wirntr",
+        },
+        {
+            "id": 1897800182957584649,
+            "text": "i have 5 picks:\n\n1. london n2 for castles crumbling w/ hayley\n\n2. amsterdam n3 for the sweeter than fiction x holy ground and mary's song\n\n3. edinburgh n2 for crazier\n\n4. whichever nashville night was the rain show with wcs and mine\n\n5. the london night with holly humberstone https://t.co/xKpr07uGLQ",
+            "created_at": datetime.datetime(
+                2025, 3, 7, 0, 3, 17, tzinfo=datetime.timezone.utc
+            ),
+            "username": "laurathestork_",
+        },
+        {
+            "id": 1897733497726325038,
+            "text": "Huidig weer in Rotterdam https://t.co/ZcjBBTGoc9",
+            "created_at": datetime.datetime(
+                2025, 3, 6, 19, 38, 18, tzinfo=datetime.timezone.utc
+            ),
+            "username": "Piet_Heyn",
             "country": "Nederland",
             "country_code": "NL",
             "full_name": "Rotterdam, Nederland",
@@ -43,76 +91,20 @@ def get_example_tweets():
             "place_type": "city",
         },
         {
-            "id": 1897299418052956288,
-            "text": "https://t.co/uBldDMfLsp",
+            "id": 1897730441756786752,
+            "text": "https://t.co/vwWRkCDTDM",
             "created_at": datetime.datetime(
-                2025, 3, 5, 14, 53, 26, tzinfo=datetime.timezone.utc
+                2025, 3, 6, 19, 26, 10, tzinfo=datetime.timezone.utc
             ),
-            "username": "CASTAeroSafe",
+            "username": "NickBackman4",
         },
         {
-            "id": 1897296691981963289,
-            "text": "That how I’m #unpack my boat every time when it’s a good weather in Amsterdam. https://t.co/PA2Wvq8t6x",
+            "id": 1897662710189277540,
+            "text": "The weather in Amsterdam is gorgeous 👍🇱🇺☘️🥝💚 https://t.co/GMk71WP40B",
             "created_at": datetime.datetime(
-                2025, 3, 5, 14, 42, 36, tzinfo=datetime.timezone.utc
+                2025, 3, 6, 14, 57, 1, tzinfo=datetime.timezone.utc
             ),
-            "username": "CryptoYDao",
-        },
-        {
-            "id": 1897290780831846469,
-            "text": "That how I’m #unpack my boat Avery time when it’s a good weather in Amsterdam. https://t.co/tEuikmd6UX",
-            "created_at": datetime.datetime(
-                2025, 3, 5, 14, 19, 6, tzinfo=datetime.timezone.utc
-            ),
-            "username": "CryptoYDao",
-        },
-        {
-            "id": 1897288350072983565,
-            "text": "Even the birds seem happy that the weather is improving in Amsterdam's Red Light District. \n\nExciting times ahead: 3 million tourists from around the world are expected to visit this district, eager to discover what lies behind Amsterdam's \"red\" windows.\n\nI’ll need to find a new… https://t.co/SyAn5GBkSx https://t.co/T05sVVbJGG",
-            "created_at": datetime.datetime(
-                2025, 3, 5, 14, 9, 27, tzinfo=datetime.timezone.utc
-            ),
-            "username": "PascalMurasira",
-        },
-        {
-            "id": 1897282901794021517,
-            "text": "A beautiful sunny day in Amsterdam https://t.co/qLfk88g02q",
-            "created_at": datetime.datetime(
-                2025, 3, 5, 13, 47, 48, tzinfo=datetime.timezone.utc
-            ),
-            "username": "paxtondom",
-        },
-        {
-            "id": 1897274227398729996,
-            "text": "Quick boat tour in Amsterdam before catching my flight this evening! Decent weather for it too. https://t.co/cnzIeZcgEb",
-            "created_at": datetime.datetime(
-                2025, 3, 5, 13, 13, 20, tzinfo=datetime.timezone.utc
-            ),
-            "username": "Mosh108",
-        },
-        {
-            "id": 1897236579598655499,
-            "text": "I expected it to be a windy &amp; rainy night in Rotterdam …. but it’s sunny, 12 degrees and very little wind at kickoff today. Forza Inter!!",
-            "created_at": datetime.datetime(
-                2025, 3, 5, 10, 43, 44, tzinfo=datetime.timezone.utc
-            ),
-            "username": "ArnautovicArmy",
-        },
-        {
-            "id": 1897229839670898852,
-            "text": "Peep the pic. Whole room looks plugged into X through headphones 😅 Secret meetup? Gonzo mode on. In sunny Amsterdam with crypto mom @cryptocanal &amp; frens—building the agent-powered future. https://t.co/iqOdRISpy0",
-            "created_at": datetime.datetime(
-                2025, 3, 5, 10, 16, 57, tzinfo=datetime.timezone.utc
-            ),
-            "username": "leealabs",
-        },
-        {
-            "id": 1897041565367066661,
-            "text": "Netherlands: Runway at Amsterdam Schiphol Airport to close two hours on sunny mornings amid solar panel issues https://t.co/WgwKglooGt",
-            "created_at": datetime.datetime(
-                2025, 3, 4, 21, 48, 49, tzinfo=datetime.timezone.utc
-            ),
-            "username": "avsec_pro",
+            "username": "smuWhite",
         },
     ]
 
@@ -189,7 +181,7 @@ def process_twitter_responce(response):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    USE_EXAMPLE_TWEETS = True
+    USE_EXAMPLE_TWEETS = False
 
     tweets = []
 
@@ -253,4 +245,4 @@ def db():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=3333, debug=True)

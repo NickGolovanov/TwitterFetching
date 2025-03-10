@@ -5,12 +5,59 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>DynamoDB Posts</title>
 		<style>
-			table,
+			body {
+				font-family: 'Arial', sans-serif;
+				background-color: #f4f4f9;
+				text-align: center;
+				color: #333;
+				margin: 0;
+				padding: 0;
+			}
+
+			h1 {
+				color: #444;
+				font-size: 2rem;
+				margin-bottom: 1rem;
+			}
+
+			table {
+				width: 90%;
+				max-width: 1200px;
+				margin: 20px auto;
+				border-collapse: collapse;
+				background: #fff;
+				box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+				border-radius: 8px;
+				overflow: hidden;
+			}
+
+			th {
+				white-space: nowrap;
+			}
+
 			th,
 			td {
-				border: 1px solid black;
-				border-collapse: collapse;
-				padding: 4px 8px;
+				padding: 12px;
+				text-align: left;
+				border-bottom: 1px solid #ddd;
+			}
+
+			th {
+				background-color: #007bff;
+				color: white;
+				text-transform: uppercase;
+			}
+
+			tr:nth-child(even) {
+				background-color: #f8f9fa;
+			}
+
+			tr:hover {
+				background-color: #f1f1f1;
+			}
+
+			td {
+				color: #333;
 			}
 		</style>
 	</head>
@@ -20,7 +67,6 @@
 			<tr>
 				<th>Post ID</th>
 				<th>Social Media ID</th>
-				<th>Location ID</th>
 				<th>Description</th>
 				<th>Severity</th>
 				<th>Weather Type</th>
@@ -30,7 +76,6 @@
 			<tr>
 				<td>{{ post.post_id }}</td>
 				<td>{{ post.social_media_id }}</td>
-				<td>{{ post.location_id }}</td>
 				<td>{{ post.descritpion }}</td>
 				<td>{{ post.severity }}</td>
 				<td>{{ post.weather_type }}</td>
