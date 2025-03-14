@@ -1,0 +1,1 @@
+from .user_service import fetch_all_users
