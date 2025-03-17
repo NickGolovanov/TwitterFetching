@@ -3,11 +3,7 @@ import boto3
 
 dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
 
-def rehashe_link(hash):
-    # rehash the link 
-    # take the post_id 
-    # send the posts (json)
-    
+def rehashe_link(hash):    
     table = dynamodb.Table('Users')
     response = table.scan()
     return response.get('Items', [])

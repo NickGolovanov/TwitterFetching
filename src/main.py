@@ -2,6 +2,8 @@ from flask import Flask
 import boto3
 from flask import jsonify  # To return a response in JSON format
 from routes import main_routes  # Original import
+import threading
+from .services.pipeline_service import data_pipeline
 
 app = Flask(__name__)
 app.register_blueprint(main_routes)  # Registering only main routes
@@ -28,4 +30,8 @@ def test():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
+    # data_thread = threading.Thread(target=data_pipeline, daemon=True)
+    # data_thread.start()
+
     app.run(debug=True, port=5001)
+    

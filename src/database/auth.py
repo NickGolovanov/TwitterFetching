@@ -2,6 +2,7 @@ import tweepy
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -28,24 +29,31 @@ client = tweepy.Client(
     wait_on_rate_limit=True
 )
 
-# api = tweepy.API(auth, wait_on_rate_limit=True)
-
 search_query = "Elon Musk fired -is:retweet -is:reply -has:links"
-# search_query = "point_radius:[4.895168 53.370216 25km]"
 no_of_tweets = 100
 
 try:
-    # Fetch tweets
-    tweets = client.search_recent_tweets(query=search_query, max_results=no_of_tweets, tweet_fields=["created_at", "author_id"])
+
+    response = client.search_recent_tweets(
+        query=search_query,
+        max_results=no_of_tweets,
+        tweet_fields=["created_at", "author_id"]
+    )
 
     # Process and store tweets
-    if tweets.data:
-        attributes_container = [[tweet.author_id, tweet.created_at, tweet.text] for tweet in tweets.data]
+    if response.data:
+        tweet_list = [
+            {
+                "User ID": tweet.author_id,
+                "Date Created": tweet.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "Tweet": tweet.text
+            }
+            for tweet in response.data
+        ]
+        
+        tweets_json = json.dumps(tweet_list, indent=4)
 
-        columns = ["User ID", "Date Created", "Tweet"]
-        tweets_df = pd.DataFrame(attributes_container, columns=columns)
-
-        print(tweets_df)
+        print(tweets_json)
     else:
         print("No tweets found.")
 
