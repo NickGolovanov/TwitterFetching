@@ -11,8 +11,8 @@ def get_users():
 
 @user_routes.route('/<user_id>', methods=['GET'])
 def get_user(user_id):
-    user = fetch_item_by_key(user_id)
+    user = fetch_item_by_key(DYNAMODB_TABLES.get('User'), "user_id", user_id)
     if user: 
         return jsonify(user)
     else:
-        return jsonify({"error: User not found"}), 404
+        return jsonify({"error" : "User not found"}), 404

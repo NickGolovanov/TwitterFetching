@@ -10,9 +10,9 @@ def get_social_media():
     return jsonify(social_medias)
 
 @social_media_routes.route('/<social_media_id>', methods=["GET"])
-def get_social_media(social_media_id):
-    social_media = fetch_item_by_key(social_media_id)
+def get_social_medias(social_media_id):
+    social_media = fetch_item_by_key(DYNAMODB_TABLES.get('SocialMedia'), "social_media_id", social_media_id)
     if social_media:
         return jsonify(social_media)
     else:
-        return jsonify({"error: SocialMedia not found"}), 404
+        return jsonify({"error" : "SocialMedia not found"}), 404

@@ -6,6 +6,8 @@ dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
 
 def fetch_data_by_post_ids(post_ids):
     table = dynamodb.Table('Post')
+    if not post_ids:
+        return []
     keys = [{'post_id': post_id} for post_id in post_ids]
 
     response = dynamodb.batch_get_item(
