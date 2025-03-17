@@ -1,8 +1,10 @@
 from flask import Flask
 import boto3
 from flask import jsonify  # To return a response in JSON format
+from routes import main_routes
 
 app = Flask(__name__)
+app.register_blueprint(main_routes)
 
 # Initialize DynamoDB resource, use the correct region
 dynamodb = boto3.resource('dynamodb', region_name='eu-north-1')  # Set your region here
