@@ -16,7 +16,7 @@ def fetch_all_items(table_name):
 def fetch_item_by_key(table_name, key_name, key):
     table = dynamodb.Table(table_name)
     try:
-        response = table.query(KeyConditionExpression=Key(key_name).eq(key))
+        response = table.query(KeyConditionExpression=Key(key_name).eq(int(key)))
         print(response)
         return response.get('Items', None)
     except Exception as e:
