@@ -7,7 +7,7 @@ from models.types import Log
 
 def insert_social_media(
     search_query: str, start_time: str, end_time: str, logs: List[Log]
-) -> None:
+) -> Dict[str, Any]:
     """
     Insert a social media item with the given search_query, start_time, end_time, and logs.
     """
@@ -21,17 +21,22 @@ def insert_social_media(
     }
     insert_item("SocialMedia", social_media_item)
 
+    return social_media_item
+
 
 def insert_log_to_social_media(social_media_id: int, log: Log) -> None:
     """
     Insert a log into an existing social media item's logs array.
     """
-    update_item(
-        table_name="SocialMedia",
-        key={"social_media_id": social_media_id},
-        update_expression="SET logs = list_append(if_not_exists(logs, :empty_list), :log)",
-        expression_attribute_values={":log": [log], ":empty_list": []},
-    )
+    try:
+        update_item(
+            table_name="SocialMedia",
+            key={"social_media_id": social_media_id},
+            update_expression="SET logs = list_append(if_not_exists(logs, :empty_list), :log)",
+            expression_attribute_values={":log": [log], ":empty_list": []},
+        )
+    except Exception as log_error:
+        print(f"Failed to log error: {log_error}")
 
 
 def get_social_medias() -> List[Dict[str, Any]]:

@@ -13,7 +13,7 @@ def insert_information(
     weather_type: str,
     date: str,
     post_ids: List[int],
-) -> None:
+) -> Dict[str, Any]:
     """
     Insert an information item with the given geo_data_id, location, description, severity, weather_type, date, and post_ids.
     """
@@ -29,6 +29,8 @@ def insert_information(
         "post_ids": post_ids,
     }
     insert_item("Information", information_item)
+
+    return information_item
 
 
 def get_informations() -> List[Dict[str, Any]]:

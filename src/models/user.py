@@ -12,7 +12,6 @@ def insert_user(
     Insert a user item with the given location, city, and longitude_latitude.
     """
     user_id = uuid.uuid4().int % 10**38
-    print("user_id", user_id)
     user_item = {
         "user_id": user_id,
         "location": location,

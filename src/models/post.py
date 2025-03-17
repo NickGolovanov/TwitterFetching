@@ -12,7 +12,7 @@ def insert_post(
     weather_type: str,
     date: str,
     id: int,
-) -> None:
+) -> Dict[str, Any]:
     """
     Insert a post item with the given social_media_id, location, description, severity, weather_type, date, and id.
     """
@@ -28,6 +28,8 @@ def insert_post(
         "id": id,
     }
     insert_item("Post", post_item)
+
+    return post_item
 
 
 def get_posts() -> List[Dict[str, Any]]:

@@ -12,6 +12,7 @@ from botocore.exceptions import ClientError
 from types_boto3_dynamodb.type_defs import (
     KeySchemaElementTypeDef,
     AttributeDefinitionTypeDef,
+    GlobalSecondaryIndexUnionTypeDef,
     ProvisionedThroughputTypeDef,
 )
 
@@ -65,6 +66,7 @@ def create_table_if_not_exists(
     table_name: str,
     key_schema: List[KeySchemaElementTypeDef],
     attribute_definitions: List[AttributeDefinitionTypeDef],
+    global_secondary_indexes: Optional[List[GlobalSecondaryIndexUnionTypeDef]] = None,
     provisioned_throughput: ProvisionedThroughputTypeDef = {
         "ReadCapacityUnits": 5,
         "WriteCapacityUnits": 5,
@@ -84,6 +86,7 @@ def create_table_if_not_exists(
                 TableName=table_name,
                 KeySchema=key_schema,
                 AttributeDefinitions=attribute_definitions,
+                GlobalSecondaryIndexes=global_secondary_indexes,
                 ProvisionedThroughput=provisioned_throughput,
             )
 
@@ -123,6 +126,22 @@ def create_main_tables_if_not_exist(client: DynamoDBClient) -> None:
         attribute_definitions=[
             {"AttributeName": "post_id", "AttributeType": "N"},
             {"AttributeName": "social_media_id", "AttributeType": "N"},
+            {"AttributeName": "id", "AttributeType": "N"},
+            {"AttributeName": "description", "AttributeType": "S"},
+        ],
+        global_secondary_indexes=[
+            {
+                "IndexName": "id-description-index",
+                "KeySchema": [
+                    {"AttributeName": "id", "KeyType": "HASH"},
+                    {"AttributeName": "description", "KeyType": "RANGE"},
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5,
+                },
+            }
         ],
     )
 

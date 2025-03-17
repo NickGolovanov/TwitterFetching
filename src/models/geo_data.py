@@ -8,7 +8,7 @@ def insert_geo_data(
     search_query: str,
     start_time: str,
     end_time: str,
-) -> None:
+) -> Dict[str, Any]:
     """
     Insert a geo data item with the given search_query, start_time, and end_time.
     """
@@ -20,6 +20,8 @@ def insert_geo_data(
         "end_time": end_time,
     }
     insert_item("GeoData", geo_date_item)
+
+    return geo_date_item
 
 
 def get_geo_datas() -> List[Dict[str, Any]]:

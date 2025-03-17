@@ -1,4 +1,5 @@
 from enum import Enum
+from os import times
 from typing import TypedDict
 
 
@@ -9,8 +10,9 @@ class LogType(Enum):
 
 
 class Log(TypedDict):
+    timestamp: str
     message: str
-    type: LogType
+    type: str
 
 
 class Location(TypedDict):
