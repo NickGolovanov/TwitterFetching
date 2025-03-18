@@ -24,5 +24,7 @@ def rehash_post_data(link):
     result = fetch_data_from_link(link)
 
     if 'error' in result:
-        return jsonify({"error": result['error']}), 400
-    return jsonify({"error": "No post IDs found in the data."}), 404
+        return jsonify({"error": "No post IDs found in the data."}), 400
+    else:
+        return jsonify(result)
+

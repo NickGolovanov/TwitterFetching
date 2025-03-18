@@ -141,7 +141,18 @@ def create_main_tables_if_not_exist(client: DynamoDBClient) -> None:
                     "ReadCapacityUnits": 5,
                     "WriteCapacityUnits": 5,
                 },
-            }
+            },
+            {
+                "IndexName": "post_id-index",
+                "KeySchema": [
+                    {"AttributeName": "post_id", "KeyType": "HASH"},
+                ],
+                "Projection": {"ProjectionType": "ALL"},
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5,
+                },
+            },
         ],
     )
 

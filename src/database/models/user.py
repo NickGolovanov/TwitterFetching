@@ -1,8 +1,8 @@
 from typing import Any, Dict, List
 import uuid
 
-from db import get_all_items, insert_item
-from models.types import Location
+from ..db import get_all_items, insert_item
+from .types import Location
 
 
 def insert_user(

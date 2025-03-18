@@ -1,8 +1,8 @@
 from typing import Any, Dict, List
 import uuid
 
-from db import get_all_items, insert_item, update_item
-from models.types import Log
+from ..db import get_all_items, insert_item, update_item
+from .types import Log
 
 
 def insert_social_media(

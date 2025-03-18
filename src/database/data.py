@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from boto3.dynamodb.conditions import Key, Attr
 
-from models.social_media import insert_social_media, insert_log_to_social_media
-from models.post import insert_post
-from models.types import LogType
-from db import dynamodb_resource
+from .models.social_media import insert_social_media, insert_log_to_social_media
+from .models.post import insert_post
+from .models.types import LogType
+from .db import dynamodb_resource
 
 load_dotenv()
 

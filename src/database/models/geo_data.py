@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 import uuid
 
-from db import get_all_items, insert_item
+from ..db import get_all_items, insert_item
 
 
 def insert_geo_data(
