@@ -1,0 +1,575 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Home endpoint returning a welcome message",
+                "operationId": "home",
+                "tags": [
+                    "main"
+                ]
+            }
+        },
+        "/geo_data/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GeoData"
+                            }
+                        }
+                    }
+                },
+                "summary": "Get all geographic data locations",
+                "operationId": "get_geo_data",
+                "tags": [
+                    "geo_data"
+                ]
+            }
+        },
+        "/geo_data/{geo_data_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The geographic data identifier",
+                    "name": "geo_data_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "Geographic data not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GeoData"
+                        }
+                    }
+                },
+                "summary": "Get geographic data by ID",
+                "operationId": "get_geo_data_by_id",
+                "tags": [
+                    "geo_data"
+                ]
+            }
+        },
+        "/information/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Information"
+                            }
+                        }
+                    }
+                },
+                "summary": "Get all information entries",
+                "operationId": "get_information",
+                "tags": [
+                    "information"
+                ]
+            }
+        },
+        "/information/{information_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The information identifier",
+                    "name": "information_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "Information not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/Information"
+                        }
+                    }
+                },
+                "summary": "Get information by ID",
+                "operationId": "get_information_by_id",
+                "tags": [
+                    "information"
+                ]
+            }
+        },
+        "/pipeline/collection_status": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/CollectionStatus"
+                        }
+                    }
+                },
+                "summary": "Get current data collection status",
+                "operationId": "collection_status",
+                "tags": [
+                    "pipeline"
+                ]
+            }
+        },
+        "/pipeline/start_collection": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Collection started",
+                        "schema": {
+                            "$ref": "#/definitions/Message"
+                        }
+                    }
+                },
+                "summary": "Start data collection pipeline",
+                "operationId": "start_posts_collection",
+                "tags": [
+                    "pipeline"
+                ]
+            }
+        },
+        "/pipeline/stop_collection": {
+            "get": {
+                "responses": {
+                    "400": {
+                        "description": "Collection not running",
+                        "schema": {
+                            "$ref": "#/definitions/Message"
+                        }
+                    },
+                    "200": {
+                        "description": "Collection stopped",
+                        "schema": {
+                            "$ref": "#/definitions/Message"
+                        }
+                    }
+                },
+                "summary": "Stop data collection pipeline",
+                "operationId": "stop_posts_collection",
+                "tags": [
+                    "pipeline"
+                ]
+            }
+        },
+        "/post/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Post"
+                            }
+                        }
+                    }
+                },
+                "summary": "Get all posts",
+                "operationId": "get_posts",
+                "tags": [
+                    "post"
+                ]
+            }
+        },
+        "/post/rehash/{link}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The link to extract data from",
+                    "name": "link",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/RehashResult"
+                        }
+                    }
+                },
+                "summary": "Extract and rehash data from a provided link",
+                "operationId": "rehash_post_data",
+                "tags": [
+                    "post"
+                ]
+            }
+        },
+        "/post/{post_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The post identifier",
+                    "name": "post_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "Post not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/Post"
+                        }
+                    }
+                },
+                "summary": "Get post by ID",
+                "operationId": "get_post_by_id",
+                "tags": [
+                    "post"
+                ]
+            }
+        },
+        "/social_media/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/SocialMedia"
+                            }
+                        }
+                    }
+                },
+                "summary": "Get all social media entries",
+                "operationId": "get_social_media",
+                "tags": [
+                    "social_media"
+                ]
+            }
+        },
+        "/social_media/{social_media_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The social media identifier",
+                    "name": "social_media_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "Social media not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/SocialMedia"
+                        }
+                    }
+                },
+                "summary": "Get social media by ID",
+                "operationId": "get_social_media_by_id",
+                "tags": [
+                    "social_media"
+                ]
+            }
+        },
+        "/test_dynamodb": {
+            "get": {
+                "responses": {
+                    "500": {
+                        "description": "Server Error"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/DynamoDBResponse"
+                        }
+                    }
+                },
+                "summary": "Test DynamoDB connection",
+                "operationId": "test_dynamodb",
+                "tags": [
+                    "main"
+                ]
+            }
+        },
+        "/user/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                },
+                "summary": "Get all users",
+                "operationId": "get_users",
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{user_id}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "description": "The user identifier",
+                    "name": "user_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                },
+                "summary": "Get user by ID",
+                "operationId": "get_user_by_id",
+                "tags": [
+                    "user"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "Weather Project API",
+        "version": "1.0",
+        "description": "A REST API for weather data and related services"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "main",
+            "description": "Main Operations"
+        },
+        {
+            "name": "geo_data",
+            "description": "Geographic data operations"
+        },
+        {
+            "name": "information",
+            "description": "Information operations"
+        },
+        {
+            "name": "user",
+            "description": "User operations"
+        },
+        {
+            "name": "social_media",
+            "description": "Social media operations"
+        },
+        {
+            "name": "post",
+            "description": "Post operations"
+        },
+        {
+            "name": "pipeline",
+            "description": "Pipeline operations for data collection"
+        }
+    ],
+    "definitions": {
+        "DynamoDBResponse": {
+            "properties": {
+                "Items": {
+                    "type": "array",
+                    "description": "DynamoDB items",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "description": "Response message when no items found"
+                }
+            },
+            "type": "object"
+        },
+        "GeoData": {
+            "required": [
+                "geo_data_id"
+            ],
+            "properties": {
+                "geo_data_id": {
+                    "type": "string",
+                    "description": "Geographic data identifier"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Location name"
+                },
+                "coordinates": {
+                    "type": "string",
+                    "description": "Geographic coordinates"
+                }
+            },
+            "type": "object"
+        },
+        "Information": {
+            "required": [
+                "information_id"
+            ],
+            "properties": {
+                "information_id": {
+                    "type": "string",
+                    "description": "Information identifier"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Information title"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Information content"
+                }
+            },
+            "type": "object"
+        },
+        "User": {
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "description": "User identifier"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "User name"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "User email"
+                }
+            },
+            "type": "object"
+        },
+        "SocialMedia": {
+            "required": [
+                "social_media_id"
+            ],
+            "properties": {
+                "social_media_id": {
+                    "type": "string",
+                    "description": "Social media identifier"
+                },
+                "platform": {
+                    "type": "string",
+                    "description": "Social media platform name"
+                },
+                "account": {
+                    "type": "string",
+                    "description": "Account details"
+                }
+            },
+            "type": "object"
+        },
+        "Post": {
+            "required": [
+                "post_id"
+            ],
+            "properties": {
+                "post_id": {
+                    "type": "string",
+                    "description": "Post identifier"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Post title"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Post content"
+                }
+            },
+            "type": "object"
+        },
+        "RehashResult": {
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "description": "Operation status"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "Extracted data"
+                }
+            },
+            "type": "object"
+        },
+        "Message": {
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Status message"
+                }
+            },
+            "type": "object"
+        },
+        "CollectionStatus": {
+            "required": [
+                "collecting_data"
+            ],
+            "properties": {
+                "collecting_data": {
+                    "type": "boolean",
+                    "description": "Current data collection status"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
