@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Claims Monitoring</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+    />
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="main-content-hashed">
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+<script src="js/monitoringPost.js"></script>
+
+<script>
+    fetch('nav.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('navContainer').innerHTML = html;
+            const mapItem = document.querySelector('[data-page="map"]');
+            if (mapItem) {
+                mapItem.classList.add('active');
+            }
+        })
+        .catch(err => console.error('Error loading nav:', err));
+</script>
+</body>
+</html>

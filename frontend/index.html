@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Weather Claim Prediction System</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div id="navContainer"></div>
+  <div class="welcome-content">
+    <div id="main-left-part">
+        <h1>Welcome to the Weather Claim Prediction</br> System</h1>
+        <button class="start-button" onclick="location.href='monitoring.html';">
+        Start claims monitoring &raquo;
+        </button>
+    </div>
+    
+    <div class="banner-image">
+      <img src="assets/images/welcome-illustration.png" alt="Weather Banner" />
+    </div>
+  </div>
+
+  <script>
+
+    fetch('nav.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navContainer').innerHTML = html;
+
+
+        const homeItem = document.querySelector('[data-page="home"]');
+        if (homeItem) {
+          homeItem.classList.add('active');
+        }
+      })
+      .catch(err => console.error('Error loading nav:', err));
+  </script>
+</body>
+</html>

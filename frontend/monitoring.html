@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Weather Claims Monitoring</title>
+
+		<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+		/>
+		<link rel="stylesheet" href="css/style.css" />
+	</head>
+	<body>
+		<div id="navContainer"></div>
+
+		<div class="main-content">
+			<div id="leftPanel">
+				<div id="searchContainer">
+					<input type="text" id="searchInput" placeholder="Search..." />
+					<button id="searchBtn">🔍</button>
+					<button id="filterToggleBtn">⚙️</button>
+					<button id="cancelBtn">Cancel</button>
+				</div>
+
+				<div id="filterPanel" class="hidden">
+					<h4>Filter Options</h4>
+					<label for="locationFilter">Location</label>
+					<select id="locationFilter">
+						<option value="">All</option>
+					</select>
+
+					<label for="weatherFilter">Weather Type</label>
+					<select id="weatherFilter">
+						<option value="">All</option>
+					</select>
+
+					<label for="socialFilter">Social Media</label>
+					<select id="socialFilter">
+						<option value="">All</option>
+					</select>
+
+					<label for="dateFilter">Date</label>
+					<input type="date" id="dateFilter" />
+					<button id="applyFilterBtn">Apply</button>
+				</div>
+
+				<h3 class="panel-title">All Claims</h3>
+				<div id="claimsList"></div>
+			</div>
+
+			<div id="map"></div>
+		</div>
+
+		<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+		<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+		<script src="js/requests.js"></script>
+		<script src="js/monitoring.js"></script>
+
+		<script>
+			fetch('nav.html')
+				.then(res => res.text())
+				.then(html => {
+					document.getElementById('navContainer').innerHTML = html
+					const mapItem = document.querySelector('[data-page="map"]')
+					if (mapItem) {
+						mapItem.classList.add('active')
+					}
+				})
+				.catch(err => console.error('Error loading nav:', err))
+		</script>
+	</body>
+</html>
