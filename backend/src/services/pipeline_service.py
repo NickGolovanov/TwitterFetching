@@ -1,13 +1,19 @@
-from config import AWS_REGION
+import sys
 import boto3
 import time
 from datetime import datetime
 import threading
 
-from database.data import (
+if "pytest" in sys.modules:
+    from tests.test_config import AWS_REGION
+else:
+    from src.config import AWS_REGION
+
+from src.database.data import (
     retrieve_x_posts,
     process_x_posts,
     validate_x_posts,
+    analyze_x_posts,
     store_x_posts,
     notify_x_posts,
     insert_log_to_social_media,
@@ -35,7 +41,11 @@ def data_pipeline() -> None:
             if not validated_x_posts:
                 raise ValueError("No posts passed validation")
 
-            stored_posts = store_x_posts(social_media_id, validated_x_posts)
+            analyzed_x_posts = analyze_x_posts(social_media_id, validated_x_posts)
+            if not analyzed_x_posts:
+                raise ValueError("No posts passed analysis")
+
+            stored_posts = store_x_posts(social_media_id, analyzed_x_posts)
 
             notify_x_posts(social_media_id, stored_posts)
 

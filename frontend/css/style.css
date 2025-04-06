@@ -125,3 +125,16 @@ html, body {
 #searchContainer input {
   flex: 1;
 }
+
+.tweet-container {
+  min-width: 300px;
+  max-width: 450px;
+  margin: 0 auto;
+}
+.twitter-tweet {
+  display: inline-block;
+}
+
+.leaflet-popup-content {
+  overflow-wrap: break-word;
+}

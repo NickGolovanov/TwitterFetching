@@ -1,10 +1,70 @@
-// Initialize data and state
 let allClaims = []
 let currentFiltered = []
 let map, markerCluster
 let refreshInterval = null
 
-// Load data from localStorage or fetch it
+function transformApiItem(item) {
+	if (!item || typeof item !== 'object') {
+		console.error('Invalid item structure:', item)
+		return null
+	}
+
+	const displayCity = item?.location?.city || 'Unknown'
+	const latLngStr = item?.location?.longitude_latitude || '0,0'
+	const [latPart, lngPart] = latLngStr.split(',')
+
+	return {
+		id: item?.id || 'UnknownID',
+		description: item?.description || 'No description available',
+		dateTime: item?.date || new Date().toISOString(),
+		city: displayCity,
+		latitude: parseFloat(latPart) || 0,
+		longitude: parseFloat(lngPart) || 0,
+		postId: item?.post_id || 'UnknownPostID',
+		severity: item?.severity || 'unknown',
+		socialMediaId: item?.social_media_id || 'UnknownSocialMediaID',
+		weatherType: item?.weather_type || 'unknown',
+		tweetLink: item?.tweet_link || '',
+	}
+}
+
+async function getAllPosts() {
+	try {
+		const res = await fetch('http://127.0.0.1:5001/post/')
+		const data = await res.json()
+
+		const transformedData = data.map(transformApiItem).filter(Boolean)
+		console.log('Transformed Data:', transformedData)
+
+		localStorage.setItem('allPostInfo', JSON.stringify(transformedData))
+	} catch (error) {
+		console.error('Error fetching data from API:', error)
+	}
+}
+
+async function getHashedPosts(hash) {
+	try {
+		const res = await fetch(`http://127.0.0.1:5001/post/rehash/${hash}`)
+		const data = await res.json()
+
+		console.log('Fetched Hashed Posts:', data)
+
+		const transformedData = data.map(transformApiItem).filter(Boolean)
+		console.log('Transformed Hashed Data:', transformedData)
+
+		localStorage.setItem('hashedPostInfo', JSON.stringify(transformedData))
+	} catch (error) {
+		console.error('Error fetching hashed data from API:', error)
+	}
+}
+
+function redirectToAllPosts() {
+	window.location.href = 'monitoring.html'
+}
+function redirectToPost() {
+	window.location.href = 'monitoringPost.html'
+}
+
 async function initializeData() {
 	let storedData = localStorage.getItem('allPostInfo')
 
@@ -13,15 +73,12 @@ async function initializeData() {
 		storedData = localStorage.getItem('allPostInfo')
 	}
 
-	console.log('Raw localStorage data:', storedData)
-
 	try {
 		let parsedData = JSON.parse(storedData)
 
 		if (Array.isArray(parsedData)) {
 			allClaims = parsedData
 			currentFiltered = [...allClaims]
-			console.log('Extracted posts array:', allClaims)
 		} else {
 			console.warn('Data exists but is not an array:', parsedData)
 		}
@@ -30,7 +87,6 @@ async function initializeData() {
 	}
 }
 
-// Check for new posts and update if needed
 async function checkForNewPosts() {
 	const previousCount = allClaims.length
 	const previousIds = new Set(allClaims.map(claim => claim.id))
@@ -42,7 +98,6 @@ async function checkForNewPosts() {
 		const parsedData = JSON.parse(storedData)
 
 		if (Array.isArray(parsedData)) {
-			// Check if there are new posts
 			const hasNewPosts =
 				parsedData.length > previousCount ||
 				parsedData.some(post => !previousIds.has(post.id))
@@ -51,10 +106,7 @@ async function checkForNewPosts() {
 				console.log('New posts detected, updating display...')
 				allClaims = parsedData
 
-				// Maintain current filter settings
 				applySearchFilter()
-
-				// Update filter options with new data
 				populateFilterOptions(allClaims)
 			}
 		}
@@ -63,12 +115,10 @@ async function checkForNewPosts() {
 	}
 }
 
-// Format date for display
 function formatDate(dateStr) {
 	return new Date(dateStr).toLocaleString()
 }
 
-// Initialize and configure the map
 function setupMap() {
 	const mapContainer = document.getElementById('map')
 	if (!mapContainer) {
@@ -76,7 +126,6 @@ function setupMap() {
 		return false
 	}
 
-	// Define Netherlands boundaries
 	const southWest = [50.5, 3.2]
 	const northEast = [53.7, 7.3]
 
@@ -95,7 +144,6 @@ function setupMap() {
 		spiderfyOnEveryZoom: true,
 		showCoverageOnHover: false,
 	})
-
 	map.addLayer(markerCluster)
 
 	map.on('click', () => {
@@ -106,7 +154,6 @@ function setupMap() {
 	return true
 }
 
-// Update the panel title
 function updatePanelTitle(text) {
 	const titleElement = document.querySelector('.panel-title')
 	if (titleElement) {
@@ -114,36 +161,58 @@ function updatePanelTitle(text) {
 	}
 }
 
-// Load markers onto the map
 function loadMarkers(claims) {
-	markerCluster.clearLayers()
+  markerCluster.clearLayers();
 
-	claims.forEach(claim => {
-		if (!claim.latitude || !claim.longitude) return
+  claims.forEach(claim => {
+    if (!claim.latitude || !claim.longitude) return;
 
-		const marker = L.marker([claim.latitude, claim.longitude])
-		marker.bindPopup(`
-            <b>${claim.weatherType || 'Unknown'}</b><br>
-            ${claim.city || 'Unknown'}<br>
-            ${formatDate(claim.dateTime)}
-        `)
+    const marker = L.marker([claim.latitude, claim.longitude]);
 
-		marker.on('click', () => {
-			const sameLocation = claims.filter(
-				c =>
-					Math.abs(c.latitude - claim.latitude) < 0.0001 &&
-					Math.abs(c.longitude - claim.longitude) < 0.0001
-			)
+    const fallbackContent = `
+      <b>${claim.weatherType || 'Unknown'}</b><br>
+      ${claim.city || 'Unknown'}<br>
+      ${formatDate(claim.dateTime)}
+    `;
 
-			displayClaims(sameLocation)
-			updatePanelTitle(`${sameLocation.length} Claim(s) at This Location`)
-		})
+    let embedHtml = fallbackContent;
+    if (claim.tweetLink) {
+      embedHtml = `
+        <div class="tweet-container">
+          <blockquote class="twitter-tweet">
+            <p>${claim.description || 'No description available'}</p>
+            <a href="${claim.tweetLink.replace('x.com', 'twitter.com')}"></a>
+          </blockquote>
+        </div>
+      `;
+    }
 
-		markerCluster.addLayer(marker)
-	})
+    marker.bindPopup(embedHtml);
+
+    marker.on('click', () => {
+      const sameLocation = claims.filter(
+        c =>
+          Math.abs(c.latitude - claim.latitude) < 0.0001 &&
+          Math.abs(c.longitude - claim.longitude) < 0.0001
+      );
+
+      displayClaims(sameLocation);
+      updatePanelTitle(`${sameLocation.length} Claim(s) at This Location`);
+
+      if (claim.tweetLink) {
+        setTimeout(() => {
+          if (window.twttr && window.twttr.widgets) {
+            window.twttr.widgets.load();
+          }
+        }, 100);
+      }
+    });
+
+    markerCluster.addLayer(marker);
+  });
 }
 
-// Display claims in the sidebar
+
 function displayClaims(claimsArray) {
 	const claimsList = document.getElementById('claimsList')
 	if (!claimsList) {
@@ -157,16 +226,20 @@ function displayClaims(claimsArray) {
 		const div = document.createElement('div')
 		div.className = 'claim-item'
 		div.innerHTML = `
-            <strong>City:</strong> ${claim.city || 'Unknown'}<br>
-            <strong>Weather:</strong> ${claim.weatherType || 'N/A'}<br>
-            <strong>Social Media:</strong> ${claim.socialMediaId || 'N/A'}<br>
-            <strong>Date/Time:</strong> ${formatDate(claim.dateTime)}
-        `
+      <strong>City:</strong> ${claim.city || 'Unknown'}<br>
+      <strong>Weather:</strong> ${claim.weatherType || 'N/A'}<br>
+      <strong>Social Media:</strong> ${claim.socialMediaId || 'N/A'}<br>
+      <strong>Date/Time:</strong> ${formatDate(claim.dateTime)}<br>
+      ${
+				claim.tweetLink
+					? `<small>Link: <a href="${claim.tweetLink}" target="_blank">${claim.tweetLink}</a></small>`
+					: ''
+			}
+    `
 		claimsList.appendChild(div)
 	})
 }
 
-// Populate filter dropdowns with unique values
 function populateFilterOptions(claims) {
 	const elements = {
 		location: document.getElementById('locationFilter'),
@@ -185,12 +258,10 @@ function populateFilterOptions(claims) {
 		social: [...new Set(claims.map(c => c.socialMediaId))].filter(Boolean),
 	}
 
-	// Reset dropdowns
 	elements.location.innerHTML = "<option value=''>All</option>"
 	elements.weather.innerHTML = "<option value=''>All</option>"
 	elements.social.innerHTML = "<option value=''>All</option>"
 
-	// Populate dropdowns
 	const populateDropdown = (element, values) => {
 		values.forEach(value => {
 			const opt = document.createElement('option')
@@ -205,7 +276,6 @@ function populateFilterOptions(claims) {
 	populateDropdown(elements.social, uniqueValues.social)
 }
 
-// Initialize search and filter functionality
 function initSearchAndFilter() {
 	const elements = {
 		searchBtn: document.getElementById('searchBtn'),
@@ -220,18 +290,14 @@ function initSearchAndFilter() {
 		return
 	}
 
-	// Toggle filter panel
 	elements.filterToggleBtn.addEventListener('click', () => {
 		elements.filterPanel.classList.toggle('hidden')
 	})
 
-	// Apply search/filter
 	elements.searchBtn.addEventListener('click', applySearchFilter)
 	elements.applyFilterBtn.addEventListener('click', applySearchFilter)
 
-	// Reset filters
 	elements.cancelBtn.addEventListener('click', () => {
-		// Reset all filter inputs
 		document.getElementById('searchInput').value = ''
 		document.getElementById('locationFilter').value = ''
 		document.getElementById('weatherFilter').value = ''
@@ -240,7 +306,6 @@ function initSearchAndFilter() {
 		const dateEl = document.getElementById('dateFilter')
 		if (dateEl) dateEl.value = ''
 
-		// Reset display
 		updatePanelTitle('All Claims')
 		currentFiltered = [...allClaims]
 		displayClaims(allClaims)
@@ -248,7 +313,6 @@ function initSearchAndFilter() {
 	})
 }
 
-// Apply search and filter criteria
 function applySearchFilter() {
 	let filtered = [...allClaims]
 
@@ -262,7 +326,6 @@ function applySearchFilter() {
 		date: document.getElementById('dateFilter')?.value || '',
 	}
 
-	// Apply text search
 	if (filters.searchTerm) {
 		filtered = filtered.filter(claim => {
 			const combined = [
@@ -273,20 +336,22 @@ function applySearchFilter() {
 			]
 				.join(' ')
 				.toLowerCase()
-
 			return combined.includes(filters.searchTerm)
 		})
 	}
 
-	// Apply dropdown filters
-	if (filters.location)
+	if (filters.location) {
 		filtered = filtered.filter(c => c.city === filters.location)
-	if (filters.weather)
-		filtered = filtered.filter(c => c.weatherType === filters.weather)
-	if (filters.social)
-		filtered = filtered.filter(c => c.socialMediaId === filters.social)
+	}
 
-	// Apply date filter
+	if (filters.weather) {
+		filtered = filtered.filter(c => c.weatherType === filters.weather)
+	}
+
+	if (filters.social) {
+		filtered = filtered.filter(c => c.socialMediaId === filters.social)
+	}
+
 	if (filters.date) {
 		filtered = filtered.filter(claim => {
 			const claimDate = (claim.dateTime || '').split('T')[0]
@@ -294,24 +359,20 @@ function applySearchFilter() {
 		})
 	}
 
-	// Update display
 	currentFiltered = filtered
 	updatePanelTitle(`Search results: ${filtered.length} found`)
 	displayClaims(filtered)
 	loadMarkers(filtered)
 }
 
-// Start the auto-refresh timer
 function startAutoRefresh() {
 	if (refreshInterval) {
 		clearInterval(refreshInterval)
 	}
-
-	refreshInterval = setInterval(checkForNewPosts, 10000)
+	refreshInterval = setInterval(checkForNewPosts, 100000)
 	console.log('Auto-refresh started: checking for new posts every 10 seconds')
 }
 
-// Main initialization
 window.addEventListener('DOMContentLoaded', async () => {
 	await initializeData()
 

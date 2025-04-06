@@ -1,8 +1,8 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from services.alert_service import process_weather_alert
-from services.dynamo_service import fetch_all_items
-from config import DYNAMODB_TABLES
+from src.services.alert_service import process_weather_alert
+from src.services.dynamo_service import fetch_all_items
+from src.config import DYNAMODB_TABLES
 
 # Create namespace
 ns = Namespace("alert", description="Weather alert processing operations")
@@ -35,7 +35,11 @@ class GetAlerts(Resource):
         if not alerts:
             return [], 200
 
-        alerts = sorted(alerts, key=lambda x: x["date_time"], reverse=True)
+        # Convert Decimal objects to int or float for JSON serialization
+        for alert in alerts:
+            alert["weather_alert_id"] = int(alert["weather_alert_id"])
+
+        alerts = sorted(alerts, key=lambda x: x["date"], reverse=True)
         return alerts, 200
 
     @ns.expect(alert_model)

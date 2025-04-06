@@ -1,5 +1,5 @@
-from database.models.weather_alert import insert_weather_alert
-from services.email_service import send_email
+from src.database.models.weather_alert import insert_weather_alert
+from src.services.email_service import send_email
 
 
 def process_weather_alert(post_data):

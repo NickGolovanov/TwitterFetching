@@ -3,14 +3,18 @@ import boto3
 import os
 from dotenv import load_dotenv
 from cryptography.fernet import Fernet
-from config import AWS_REGION
+import sys
+
+if "pytest" in sys.modules:
+    from tests.test_config import AWS_REGION, HASHING_SECRET
+else:
+    from src.config import AWS_REGION
+
+    load_dotenv()
+    HASHING_SECRET = os.getenv("HASHING_SECRET", "")
 
 
 dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
-
-load_dotenv()
-
-HASHING_SECRET = os.getenv("HASHING_SECRET", "")
 
 cipher_suite = Fernet(HASHING_SECRET)
 

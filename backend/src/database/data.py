@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, Tuple
 
+import requests
 import re
 import tweepy
 import os
@@ -11,8 +12,10 @@ from .models.social_media import insert_social_media, insert_log_to_social_media
 from .models.post import insert_post
 from .models.types import LogType
 from .db import dynamodb_resource
-from services.email_service import send_email
-from services.post_service import encrypt_data
+from src.services.email_service import send_email
+from src.services.post_service import encrypt_data
+
+from .ai_weather_analyzer import WeatherAnalyzer
 
 load_dotenv()
 
@@ -25,7 +28,7 @@ SEARCH_QUERY: str = (
     (Amsterdam OR Haarlem OR Amstelveen OR Zaandam OR Almere OR Hoofddorp OR Diemen) \
     (lang:nl OR lang:en) -is:retweet"
 )
-MAX_RESULTS: int = 10
+MAX_RESULTS: int = 20
 
 
 WEATHER_KEYWORDS = {
@@ -207,6 +210,7 @@ def process_x_posts(social_media_id: int, x_posts: Any) -> Optional[List]:
                     "username": users.get(tweet.author_id, {}).get(
                         "username", "Unknown"
                     ),
+                    "tweet_link": f"https://x.com/{users.get(tweet.author_id, {}).get('username', 'Unknown')}/status/{tweet.id}",
                 }
                 geo = tweet.get("geo", {})
                 if geo and "place_id" in geo:
@@ -241,6 +245,31 @@ def process_x_posts(social_media_id: int, x_posts: Any) -> Optional[List]:
                     else:
                         coordinates = None
 
+                    if place.get("full_name"):
+                        try:
+                            nominatim_url = f"https://nominatim.openstreetmap.org/search?q={place.get('full_name')}&format=json&limit=1"
+                            response = requests.get(nominatim_url)
+
+                            if response.status_code == 200 and response.json():
+                                result = response.json()[0]
+                                longitude_latitude = f"{result['lat']},{result['lon']}"
+                                coordinates = [
+                                    float(result["lat"]),
+                                    float(result["lon"]),
+                                ]
+                            else:
+                                longitude_latitude = ",".join(map(str(coordinates)))
+                        except Exception as e:
+                            print(f"Error fetching coordinates from Nominatim: {e}")
+                            longitude_latitude = ",".join(map(str, coordinates))
+
+                        location = {
+                            "city": place.get("full_name"),
+                            "longitude_latitude": longitude_latitude,
+                        }
+                    else:
+                        location = None
+
                     tweet_data.update(
                         {
                             "country": place.get("country"),
@@ -248,9 +277,7 @@ def process_x_posts(social_media_id: int, x_posts: Any) -> Optional[List]:
                             "full_name": place.get("full_name"),
                             "name": place.get("name"),
                             "place_type": place.get("place_type"),
-                            "coordinates": (
-                                ",".join(map(str, coordinates)) if coordinates else None
-                            ),
+                            "location": location,
                         }
                     )
 
@@ -415,6 +442,62 @@ def validate_x_posts(social_media_id: int, x_posts: List) -> Optional[List]:
         return None
 
 
+def analyze_x_posts(social_media_id: int, x_posts: List) -> None:
+    try:
+        insert_log_to_social_media(
+            social_media_id=social_media_id,
+            log={
+                "timestamp": datetime.now().isoformat(),
+                "message": "Started analyzing X posts",
+                "type": str(LogType.INFO),
+            },
+        )
+        analyzer = WeatherAnalyzer()
+
+        for tweet in x_posts:
+            try:
+                result = analyzer.analyze_weather_text(tweet["text"])
+                tweet["weather_type"] = result["weather_type"]
+                tweet["severity"] = (
+                    f"{result["severity_category"]} ({result["severity_score"]}/10)"
+                )
+            except Exception as e:
+                print(f"Error analyzing tweet {tweet['id']}: {e}")
+
+                insert_log_to_social_media(
+                    social_media_id=social_media_id,
+                    log={
+                        "timestamp": datetime.now().isoformat(),
+                        "message": f"Error analyzing tweet {tweet['id']}: {str(e)}",
+                        "type": str(LogType.ERROR),
+                    },
+                )
+
+        insert_log_to_social_media(
+            social_media_id=social_media_id,
+            log={
+                "timestamp": datetime.now().isoformat(),
+                "message": "Finished analyzing X posts",
+                "type": str(LogType.INFO),
+            },
+        )
+
+        return x_posts
+    except Exception as e:
+        print(f"Critical error in analyze_x_posts: {e}")
+
+        insert_log_to_social_media(
+            social_media_id=social_media_id,
+            log={
+                "timestamp": datetime.now().isoformat(),
+                "message": f"Critical analysis error: {str(e)}",
+                "type": str(LogType.ERROR),
+            },
+        )
+
+        return None
+
+
 def store_x_posts(social_media_id: int, x_posts: List) -> List:
     """
     Stores the validated tweets in a database or file for further analysis.
@@ -433,22 +516,15 @@ def store_x_posts(social_media_id: int, x_posts: List) -> List:
 
         for tweet in x_posts:
             try:
-                if tweet.get("full_name") is None or tweet.get("coordinates") is None:
-                    location = None
-                else:
-                    location = {
-                        "city": tweet.get("full_name", "Unknown"),
-                        "longitude_latitude": tweet.get("coordinates", "Unknown"),
-                    }
-
                 post_item = insert_post(
                     social_media_id=social_media_id,
-                    location=location,  # type: ignore
+                    location=tweet.get("location"),
                     description=tweet.get("text", ""),
                     severity=tweet.get("severity", "unknown"),
                     weather_type=tweet.get("weather_type", "unknown"),
                     date=tweet.get("created_at", datetime.now()).isoformat(),
                     id=tweet["id"],
+                    tweet_link=tweet.get("tweet_link", "unknown"),
                 )
 
                 posts.append(post_item)
@@ -521,15 +597,13 @@ def notify_x_posts(social_media_id: int, posts: List) -> None:
 
         severe_tweets = []
 
-        # Here is basic checking of the severity of the weather
-        # In future it should be extended to more complex analysis
         for post in posts:
             label, score = extract_severity(post)
 
             if label == "unknown" and score == 0 or post["weather_type"] == "unknown":
                 continue
 
-            if score > 5 or label == "high" or label == "extreme":
+            if score > 6 or label == "high" or label == "extreme":
                 severe_tweets.append(post)
 
         if len(severe_tweets) == 0:
@@ -549,12 +623,14 @@ def notify_x_posts(social_media_id: int, posts: List) -> None:
         print(severe_tweets[0].get("weather_type"), hashed_link_part)
 
         # Send email to user
-        send_email(
-            weather_type=severe_tweets[0].get("weather_type"),
-            date_time=datetime.now().isoformat(),
-            location="Amsterdam",
-            tweet_link=f"http://localhost:5500/link.html?data={hashed_link_part}",
-        )
+        for tweet in severe_tweets:
+            print(tweet.get("weather_type"), tweet.get("date"), tweet.get("location"))
+            send_email(
+                weather_type=tweet.get("weather_type"),
+                date_time=tweet.get("date", datetime.now().isoformat()),
+                location=tweet.get("location", {}).get("city", "Unknown"),
+                tweet_link=f"http://localhost:5500/link.html?data={hashed_link_part}",
+            )
 
         print(f"http://localhost:5500/link.html?data={hashed_link_part}")
 

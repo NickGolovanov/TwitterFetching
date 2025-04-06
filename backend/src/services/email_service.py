@@ -1,21 +1,26 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import os
 
 # Email Configuration
 SMTP_SERVER = "smtp.mail.yahoo.com"
 SMTP_PORT = 465
-EMAIL_SENDER = "aerika04@yahoo.com"
-EMAIL_PASSWORD = "pkamoyfembtcddhi"  # Replace with your Yahoo App Password
-EMAIL_RECEIVER = "erika.nicolau@student.nhlstenden.com"
+EMAIL_SENDER = "weatherclaim@yahoo.com"
+EMAIL_PASSWORD = "leaanjmxrigfhcrc"
+EMAIL_RECEIVER = os.environ.get("TARGET_TEST_EMAIL", "").split(",")
+EMAIL_RECEIVER = [email.strip() for email in EMAIL_RECEIVER if email.strip()]
 
 
 def send_email(weather_type, date_time, location, tweet_link):
     """Sends a weather alert email notification."""
     try:
+        # Print the converted email list for debugging
+        print("📧 Converted Email List:", EMAIL_RECEIVER)
+
         msg = MIMEMultipart()
         msg["From"] = EMAIL_SENDER
-        msg["To"] = EMAIL_RECEIVER
+        msg["To"] = ", ".join(EMAIL_RECEIVER)  # Convert list to a comma-separated string
         msg["Subject"] = f"🚨 Weather Alert: {weather_type} Detected"
 
         body = f"""

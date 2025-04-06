@@ -1,8 +1,8 @@
 from flask import jsonify
 from flask_restx import Namespace, Resource, fields
-from services.pipeline_service import data_pipeline
-from config import DYNAMODB_TABLES
-from services.pipeline_service import collecting_data
+from src.services.pipeline_service import data_pipeline
+from src.config import DYNAMODB_TABLES
+from src.services.pipeline_service import collecting_data
 import threading
 
 data_thread = None

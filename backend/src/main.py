@@ -3,14 +3,14 @@ import boto3
 from flask_restx import Api, Resource, fields
 import threading
 from flask_cors import CORS
-from database.db import (
+from src.database.db import (
     create_main_tables_if_not_exist,
     dynamodb_client,
     dynamodb_resource,
 )
-from routes.user import user_model
+from src.routes.user import user_model
 
-from routes import (
+from src.routes import (
     geo_data_ns,
     information_ns,
     user_ns,
